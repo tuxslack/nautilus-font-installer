@@ -2,34 +2,99 @@
 #
 # ========================================================================================
 #
-# Autores:       Federico Vecchio (Vecna)
-#                Fernando Souza https://github.com/tuxslack / https://www.youtube.com/@fernandosuporte
-# Data:          17/11/2025
-# Versão:        1.1
+# Authors:       Federico Vecchio (Vecna) https://github.com/ziovec/nautilus-font-installer | ziovecna@gmail.com
+#                Fernando Souza           https://github.com/tuxslack/font-installer        | https://www.youtube.com/@fernandosuporte
+#
+# Date:          17/11/2025
+# Version:       2.1
 # Script:        acao_font-installer.sh
-# Licença:       MIT
-# Descrição:     Fonts Installer
+# License:       MIT
+# Description:   Fonts Installer
 #
 #                https://www.pling.com/p/1007676
 #                
+#
+# Installation:
+#
+#                sudo mv usr /   or  sudo mv -i acao_font-installer.sh /usr/local/bin/
+#
+#                sudo chmod +x /usr/local/bin/acao_font-installer.sh
+#
+#
+# ----------------------------------------------------------------------------------------
+#
+# Xfce (configure)
+#
+# mkdir -p ~/.config/Thunar/
+#
+# nano ~/.config/Thunar/uca.xml
+#
+# <action>
+# 	<icon>/usr/share/icons/extras/fonts.jpg</icon>
+# 	<name>Instalar Fonte</name>
+# 	<submenu></submenu>
+# 	<unique-id>1763354524864721-1</unique-id>
+# 	<command>/usr/local/bin/acao_font-installer.sh %F</command>
+# 	<description>Instalar fonte em ~/.fonts</description>
+# 	<range>*</range>
+# 	<patterns>*.ttf;*.otf;*.ttc;*.woff;*.woff2;*.pfb;*.pfa;*.pfm;*.afm;*.otc;*.bdf;*.pcf;*.snf</patterns>
+# 	<other-files/>
+# </action>
+#
+# Encerra qualquer instância do Thunar em execução.
+#
+# thunar -q
+#
+# ----------------------------------------------------------------------------------------
+# 
+# Gnome (configure)
+#
+# mkdir -p ~/.local/share/nautilus/scripts
+#
+# ln -sf /usr/local/bin/acao_font-installer.sh ~/.local/share/nautilus/scripts/
+#
+# Finaliza todas as instâncias do Nautilus que estão rodando.
+#
+# nautilus -q
+#
+# ----------------------------------------------------------------------------------------
+#
+# Use:           
+#                acao_font-installer.sh file.ttf file1.ttf file2.ttf 
 #                
 #
-# Uso:           acao_font-installer.sh file.ttf
-#                
 #
-#
-# Requisitos:    bash, yad, fc-cache
+# Requirements:  bash, yad, fc-list, fc-cache, zip, mv
 # 
 #
 # ========================================================================================
 
+
+# Websites for downloading font files:
+
+# https://www.dafontfree.co/
+# https://www.wfonts.com/
+# https://fontmeme.com/
+# https://www.dafont.com/pt/
+# https://fonts.google.com/
+# https://allbestfonts.com/
+# https://en.bestfonts.pro/
+
+
 clear
+
+# Arquivo de imagem
 
 logo="/usr/share/icons/extras/fonts.jpg"
 
-# ---------------------
-# Linguagem automática
-# ---------------------
+
+# -----------------------
+# Configurações de idioma
+# -----------------------
+
+
+# ls /usr/share/locale/
+
 
 # Function to set language strings based on the system's language
 
@@ -47,6 +112,13 @@ set_language_strings() {
             copying_fonts='Copia dei font in corso...'
             yad_not_installed="Il programma Yad non è installato."
             invalid_source_file="Non è stato selezionato alcun file sorgente valido."
+            updatecachefonts="Aggiornamento della cache dei caratteri in corso..."
+            message1="Errore"
+            message2="I seguenti comandi non sono installati"
+            message3="Tutti i comandi sono presenti."
+            message4="Il carattere %s è già installato, lo sto ignorando..."
+            message5="Installazione di %s..."
+
             ;;
 
         fr_FR* ) # French
@@ -59,6 +131,13 @@ set_language_strings() {
             copying_fonts='Copie des polices en cours...'
             yad_not_installed="Le programme Yad n'est pas installé."
             invalid_source_file="Aucun fichier source valide n'a été sélectionné."
+            updatecachefonts="Mise à jour du cache des polices..."
+            message1="Erreur"
+            message2="Les commandes suivantes ne sont pas installées"
+            message3="Toutes les commandes sont présentes."
+            message4="Police %s déjà installée, ignorant..."
+            message5="Installation de %s..."
+
             ;;
 
         es_ES* ) # Spanish
@@ -71,6 +150,13 @@ set_language_strings() {
             copying_fonts='Copiando fuentes en progreso...'
             yad_not_installed="El programa Yad no está instalado."
             invalid_source_file="No se ha seleccionado ningún archivo fuente válido."
+            updatecachefonts="Actualizando caché de fuentes..."
+            message1="Error"
+            message2="Los siguientes comandos no están instalados"
+            message3="Todos los comandos están presentes."
+            message4="La fuente %s ya está instalada, ignorando..."
+            message5="Instalando %s..."
+
             ;;
 
         de_DE* ) # German
@@ -83,6 +169,13 @@ set_language_strings() {
             copying_fonts='Kopiere Schriftarten...'
             yad_not_installed="Das Yad-Programm ist nicht installiert."
             invalid_source_file="Es wurde keine gültige Quelldatei ausgewählt."
+            updatecachefonts="Schriftart-Cache wird aktualisiert..."
+            message1="Fehler"
+            message2="Die folgenden Befehle sind nicht installiert"
+            message3="Alle Befehle sind vorhanden."
+            message4="Schriftart %s bereits installiert, ignoriert..."
+            message5="%s wird installiert..."
+ 
             ;;
 
         pt_PT* ) # Portuguese
@@ -95,6 +188,13 @@ set_language_strings() {
             copying_fonts='Copiando fontes em andamento...'
             yad_not_installed="Programa Yad não esta instalado."
             invalid_source_file="Nenhum arquivo de fonte válido foi selecionado."
+            updatecachefonts="Atualizando o cache de fontes..."
+            message1="Erro"
+            message2="Os seguintes comandos não estão instalados"
+            message3="Todos os comandos estão presentes."
+            message4="Fonte %s já instalada, ignorando..."
+            message5="Instalando %s..."
+
             ;;
 
         pt_BR* ) # Brazilian Portuguese
@@ -107,7 +207,53 @@ set_language_strings() {
             copying_fonts='Copiando fontes em andamento...'
             yad_not_installed="Programa Yad não esta instalado."
             invalid_source_file="Nenhum arquivo de fonte válido foi selecionado."
+            updatecachefonts="Atualizando o cache de fontes..."
+            message1="Erro"
+            message2="Os seguintes comandos não estão instalados"
+            message3="Todos os comandos estão presentes."
+            message4="Fonte %s já instalada, ignorando..."
+            message5="Instalando %s..."
+
             ;;
+
+        ru_RU* ) # Russian
+            ok='Установка шрифтов завершена.'
+            title_ok='Установщик шрифтов'
+            title_wait='Обновить'
+            wait='Обновление списка шрифтов...'
+            errors='Произошли ошибки'
+            title_errors='Ошибка'
+            copying_fonts='Идет копирование шрифтов...'
+            yad_not_installed="Программа Yad не установлена."
+            invalid_source_file="Не выбран допустимый файл шрифта."
+            updatecachefonts="Обновление кэша шрифтов..."
+            message1="Ошибка"
+            message2="Следующие команды не установлены"
+            message3="Все команды присутствуют."
+            message4="Шрифт %s уже установлен, игнорируется..."
+            message5="Установка %s..."
+
+            ;;
+
+        en_US* ) # English
+            ok='Font(s) installation completed.'
+            title_ok='Font Installer'
+            title_wait='Updating'
+            wait='Updating font list...'
+            errors='Errors occurred'
+            title_errors='Error'
+            copying_fonts='Copying fonts in progress...'
+            yad_not_installed="The Yad program is not installed."
+            invalid_source_file="No valid source file was selected."
+            updatecachefonts="Updating font cache..."
+            message1="Error"
+            message2="The following commands are not installed"
+            message3="All commands are present."
+            message4="Font %s already installed, ignoring..."
+            message5="Installing %s..."
+
+            ;;
+
 
         * ) # Default to English if system language not matched
             ok='Font(s) installation completed.'
@@ -119,6 +265,13 @@ set_language_strings() {
             copying_fonts='Copying fonts in progress...'
             yad_not_installed="The Yad program is not installed."
             invalid_source_file="No valid source file was selected."
+            updatecachefonts="Updating font cache..."
+            message1="Error"
+            message2="The following commands are not installed"
+            message3="All commands are present."
+            message4="Font %s already installed, ignoring..."
+            message5="Installing %s..."
+
             ;;
     esac
 }
@@ -129,7 +282,66 @@ set_language_strings() {
 # Verificar se os programas estão instalados
 
 
+check_programs(){
+
+
 which yad  1> /dev/null  2> /dev/null || { echo "$yad_not_installed"   ; exit ; }
+
+
+
+
+# Lista de comandos para verificar
+
+comandos="mv cp fc-list fc-cache zip"
+
+# Variável para armazenar comandos ausentes
+
+faltando=""
+
+# Verifica cada comando
+
+for cmd in $comandos; do
+
+    if ! command -v $cmd >/dev/null 2>&1; then
+
+        faltando="$faltando $cmd"
+
+    fi
+
+done
+
+
+
+# Se algum comando estiver faltando, mostra aviso via yad
+
+if [ -n "$faltando" ]; then
+
+    if command -v yad >/dev/null 2>&1; then
+        yad --title="$message1" \
+            --text="$message2: \n\n$faltando" \
+            --buttons-layout="center" \
+            --button="OK:0" \
+            --width="500" --height="200" \
+            2>/dev/null
+
+    else
+
+        # fallback para terminal
+
+        echo -e "$message2: \n\n$faltando \n"
+
+    fi
+
+    exit 1
+
+fi
+
+# Se tudo estiver instalado
+
+echo -e "\n$message3\n"
+
+
+}
 
 # ----------------------------------------------------------------------------------------
 
@@ -144,36 +356,78 @@ create_dir() {
 
 }
 
-# ---------------------
-# Copiar fontes com progresso
-# ---------------------
+# -----------------------------
+# Movendo fontes com progresso
+# -----------------------------
+
+
+# Usar fc-list | grep <nome_da_fonte> é a forma mais confiável de verificar se a fonte já 
+# está registrada no sistema, não apenas se o arquivo existe no $HOME/.fonts. Isso evita 
+# que você instale duplicatas de fontes que já estão disponíveis globalmente (em 
+# /usr/share/fonts ou em outra pasta de sistema).
 
 install_fonts() {
 
     valid_files=()
 
+
     # --- Verificação dos arquivos recebidos ---
 
+
+# 📂 Podem ser instaladas em /usr/share/fonts ou ~/.fonts e vão funcionar:
+
+# ✔ .pfb
+# ✔ .pfa
+# ✔ .pfm
+# ✔ .afm
+# ✔ .otc
+# ✔ .bdf
+# ✔ .pcf
+# ✔ .snf
+
+# 📂 Funcionam com limitações:
+
+# 🟡 .dfont
+# 🟡 .fnt
+# 🟡 .fon
+# 🟡 .suit
+
+# 📂 NÃO funcionam no Linux como fontes do sistema:
+
+# ⛔ .svg
+# ⛔ .eot
+
+
+# Obs: Converter formatos incompatíveis para .ttf ou .otf
+
+
+    # Filtra arquivos válidos
+
     for file in "$@"; do
+
         case "${file,,}" in
-            *.ttf|*.otf|*.ttc|*.woff|*.woff2)
+            *.ttf|*.otf|*.ttc|*.woff|*.woff2|*.pfb|*.pfa|*.pfm|*.afm|*.otc|*.bdf|*.pcf|*.snf)
                 valid_files+=("$file")
                 ;;
         esac
+
     done
+
 
     # Se nenhum arquivo válido foi encontrado, exibe erro
 
     if (( ${#valid_files[@]} == 0 )); then
-        yad --center --window-icon="$logo" --error \
-            --title="$title_error" \
+
+        yad --center \
+            --window-icon="$logo" \
+            --error \
+            --title="$title_errors" \
             --text="$invalid_source_file" \
             --buttons-layout="center" \
             --button="OK:0" \
             2>/dev/null
 
         exit 1
-
     fi
 
     # --- Processo de instalação com barra de progresso ---
@@ -183,20 +437,50 @@ install_fonts() {
 
     (
     for file in "${valid_files[@]}"; do
-        mv "$file" "$HOME/.fonts"
+
+        basefile=$(basename "$file")
+        
+        # Verifica se a fonte já está registrada no sistema
+
+        if fc-list | grep -iq "$basefile"; then
+            
+            echo "# $(printf "$message4" "$basefile")"
+
+            sleep 1
+
+        else
+
+            # É uma questão de preferência pessoal, mas eu prefiro move as fontes em vez 
+            # de copia-las. Por isso, precisei trocar "cp" por "mv".
+
+            mv "$file" "$HOME/.fonts"
+
+            echo "# $(printf "$message5" "$basefile")"
+
+        fi
+
         count=$((count+1))
+
         echo $((count * 100 / total))
+
         sleep 0.1
+
     done
-    ) | yad --center --progress --window-icon="$logo" \
-        --title="$title" \
-        --text="$copying" \
+    ) | yad \
+        --center \
+        --progress \
+        --window-icon="$logo" \
+        --title="$title_ok" \
+        --text="$copying_fonts" \
         --percentage=0 \
         --auto-close \
         --buttons-layout="center" \
         --button="OK:0" \
-        --width="500" --height="100" 2>/dev/null
+        --width="500" --height="100" \
+        2>/dev/null
 }
+
+
 
 
 # ---------------------
@@ -204,22 +488,56 @@ install_fonts() {
 # ---------------------
 
 update_cache() {
-    (
-      fc-cache -fv
-      echo "100"
-    ) | yad --center --progress --window-icon "$logo" --title="$title" --text="$updating" --percentage=0 --auto-close --buttons-layout="center" --button="OK:0" --width="500" --height="100" 2>/dev/null
+
+
+# Você deve rodar fc-cache -fv quando:
+
+# ✔ Instala novas fontes manualmente
+# ✔ Remove fontes
+# ✔ Move fontes para outros diretórios (/usr/share/fonts, ~/.fonts, /usr/local/share/fonts, etc.)
+# ✔ Algum software não reconhece fontes recém-instaladas
+
+
+echo -e "\n$updatecachefonts \n"
+
+# Contar quantas fontes existem e processar uma a uma.
+
+total=$(fc-list | wc -l)
+count=0
+
+# Reconstrói o cache de fontes usado pelo sistema para localizar e carregar fontes mais 
+# rapidamente.
+
+fc-cache -fv | while read line; do
+    count=$((count+1))
+    percent=$((count*100/total))
+    echo "$percent"
+    echo "# $line"
+done | yad \
+    --center \
+    --progress \
+    --window-icon="$logo" \
+    --title="$updatecachefonts" \
+    --text="$updating" \
+    --percentage=0 \
+    --auto-close --auto-kill \
+    --buttons-layout=center \
+    --button="OK:0" \
+    --width="500" --height="100" 
+
 }
 
 # ---------------------
 # MAIN
 # ---------------------
 
+
 set_language_strings
+check_programs
 create_dir
 install_fonts "$@"
 update_cache
 
-yad --center --info --window-icon "$logo" --title="$title" --text="$ok" --buttons-layout="center" --button="OK:0" 2> /dev/null
+yad --center --info --window-icon "$logo" --title="$title_ok" --text="$ok" --buttons-layout="center" --button="OK:0" --width="300" --height="100"  2> /dev/null
 
 exit 0
-
