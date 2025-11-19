@@ -8,7 +8,7 @@
 # Date:          17/11/2025
 # Version:       2.1
 # Script:        acao_font-installer.sh
-# License:       MIT
+# License:       GPL-3.0
 # Description:   Fonts Installer
 #
 #                https://www.pling.com/p/1007676
@@ -59,7 +59,7 @@
 #
 # ----------------------------------------------------------------------------------------
 #
-# Use:           
+# How to use:           
 #                acao_font-installer.sh file.ttf file1.ttf file2.ttf 
 #                
 #
@@ -103,6 +103,7 @@ set_language_strings() {
     case "$LANG" in
 
         it_IT* ) # Italian
+
             ok='Installazione font(s) completata.'
             title_ok='Font Installer'
             title_wait='Aggiornamento'
@@ -122,6 +123,7 @@ set_language_strings() {
             ;;
 
         fr_FR* ) # French
+
             ok='Installation des polices terminée.'
             title_ok='Installateur de polices'
             title_wait='Mise à jour'
@@ -141,6 +143,7 @@ set_language_strings() {
             ;;
 
         es_ES* ) # Spanish
+
             ok='Instalación de fuentes completada.'
             title_ok='Instalador de Fuentes'
             title_wait='Actualización'
@@ -160,6 +163,7 @@ set_language_strings() {
             ;;
 
         de_DE* ) # German
+
             ok='Schriftarten-Installation abgeschlossen.'
             title_ok='Schriftarten-Installer'
             title_wait='Aktualisierung'
@@ -179,6 +183,7 @@ set_language_strings() {
             ;;
 
         pt_PT* ) # Portuguese
+
             ok='Instalação de fontes concluída.'
             title_ok='Instalador de Fontes'
             title_wait='Atualização'
@@ -198,6 +203,7 @@ set_language_strings() {
             ;;
 
         pt_BR* ) # Brazilian Portuguese
+
             ok='Instalação de fontes concluída.'
             title_ok='Instalador de Fontes'
             title_wait='Atualização'
@@ -217,6 +223,7 @@ set_language_strings() {
             ;;
 
         ru_RU* ) # Russian
+
             ok='Установка шрифтов завершена.'
             title_ok='Установщик шрифтов'
             title_wait='Обновить'
@@ -235,7 +242,108 @@ set_language_strings() {
 
             ;;
 
+        uk* ) # Ukrainian
+
+            ok='Встановлення шрифту(ів) завершено.'
+            title_ok='Інсталятор шрифтів'
+            title_wait='Оновлення'
+            wait='Оновлення списку шрифтів...'
+            errors='Сталися помилки'
+            title_errors='Помилка'
+            copying_fonts='Триває копіювання шрифтів...'
+            yad_not_installed="Програму Yad не встановлено."
+            invalid_source_file="Не вибрано дійсний вихідний файл."
+            updatecachefonts="Оновлення кешу шрифтів..."
+            message1="Помилка"
+            message2="Наступні команди не встановлено"
+            message3="Усі команди присутні."
+            message4="Шрифт %s вже встановлено, ігнорується..."
+            message5="Встановлення %s..."
+
+            ;;
+
+        ko* ) # Korean
+
+            ok='글꼴 설치가 완료되었습니다.'
+            title_ok='글꼴 설치 프로그램'
+            title_wait='업데이트 중'
+            wait='글꼴 목록 업데이트 중...'
+            errors='오류 발생'
+            title_errors='오류'
+            copying_fonts='글꼴 복사 중...'
+            yad_not_installed="Yad 프로그램이 설치되지 않았습니다."
+            invalid_source_file="유효한 원본 파일을 선택하지 않았습니다."
+            updatecachefonts="글꼴 캐시 업데이트 중..."
+            message1="오류"
+            message2="다음 명령이 설치되지 않았습니다."
+            message3="모든 명령이 존재합니다."
+            message4="%s 글꼴이 이미 설치되었습니다. 무시합니다..."
+            message5="%s 설치 중..."
+
+            ;;
+
+        ja* ) # Japanese
+
+            ok='フォントのインストールが完了しました'
+            title_ok='フォントインストーラ'
+            title_wait='更新中'
+            wait='フォントリストを更新しています...'
+            errors='エラーが発生しました'
+            title_errors='エラー'
+            copying_fonts='フォントのコピー中...'
+            yad_not_installed="Yad プログラムがインストールされていません"
+            invalid_source_file="有効なソースファイルが選択されていません"
+            updatecachefonts="フォントキャッシュを更新しています..."
+            message1="エラー"
+            message2="以下のコマンドがインストールされていません"
+            message3="すべてのコマンドが存在します"
+            message4="フォント %s は既にインストールされています。無視します..."
+            message5="%s をインストールしています..."
+
+            ;;
+
+        zh_CN* ) # Chinese from mainland China (simplified Mandarin)
+
+            ok='字体安装完成'
+            title_ok='字体安装程序'
+            title_wait='正在更新'
+            wait='正在更新字体列表...'
+            errors='发生错误'
+            title_errors='错误'
+            copying_fonts='正在复制字体...'
+            yad_not_installed="Yad 程序未安装"
+            invalid_source_file="未选择有效的源文件"
+            updatecachefonts="正在更新字体缓存..."
+            message1="错误"
+            message2="以下命令未安装"
+            message3="所有命令均已安装"
+            message4="字体 %s 已安装，忽略..."
+            message5="正在安装 %s..."
+
+            ;;
+
+        zh_Hant* ) # Traditional Chinese (generally used in Taiwan and Hong Kong)
+
+            ok='字型安裝完成'
+            title_ok='字型安裝程式'
+            title_wait='正在更新'
+            wait='正在更新字體列表...'
+            errors='發生錯誤'
+            title_errors='錯誤'
+            copying_fonts='正在複製字體...'
+            yad_not_installed="Yad 程式未安裝"
+            invalid_source_file="未選擇有效的來源檔案"
+            updatecachefonts="正在更新字體快取..."
+            message1="錯誤"
+            message2="以下命令未安裝"
+            message3="所有指令均已安裝"
+            message4="字型 %s 已安裝，忽略..."
+            message5="正在安裝 %s..."
+
+            ;;
+
         en_US* ) # English
+
             ok='Font(s) installation completed.'
             title_ok='Font Installer'
             title_wait='Updating'
@@ -254,8 +362,8 @@ set_language_strings() {
 
             ;;
 
-
         * ) # Default to English if system language not matched
+
             ok='Font(s) installation completed.'
             title_ok='Font Installer'
             title_wait='Updating'
@@ -541,3 +649,4 @@ update_cache
 yad --center --info --window-icon "$logo" --title="$title_ok" --text="$ok" --buttons-layout="center" --button="OK:0" --width="300" --height="100"  2> /dev/null
 
 exit 0
+
